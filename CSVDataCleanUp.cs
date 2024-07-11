@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Reflection.Metadata;
 using System.Data;
+using System.Diagnostics.Metrics;
 
 namespace DataFormCleanUp
 {
@@ -17,7 +18,10 @@ namespace DataFormCleanUp
     {
         public string CSVReadFile { get; set; }
         public  List<string[]> allLines = new List<string[]>();
-        
+        public string[] valuearray { get; set; }
+        public int count { get; set; }
+
+
         public void ReaderCleanUP(string filename)
         {
             CSVReadFile = filename;
@@ -81,7 +85,8 @@ namespace DataFormCleanUp
             {
                 string[] DatesArray = allLines[0];
                 string[] IDArray = allLines[1];
-                
+
+
                 string fileName = "CleanedDatafile.txt";
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 string filePath = Path.Combine(desktopPath, fileName);
@@ -92,52 +97,48 @@ namespace DataFormCleanUp
                     {
                         writer.Write(IDArray[a] + ",");
                         
+
                     }
-                    writer.Write("$$$$$");
                     for (int i = 0; i < DatesArray.Length; i++)
-                    {
-                        if (i == 0)
                         {
-                            // Add a comma and a new line, except for the first line
-                            writer.Write("\n");
+                            if (i == 0)
+                            {
+                                // Add a comma and a new line, except for the first line
+                                writer.Write("\n");
+                            }
+                            count = i;
+                            //writer.Write(DatesArray[i]);
+                            
+                            HashSet<string> uniqueLines = new HashSet<string>();
+                            int startIndex = 69;
+                            int endIndex = allLines.Count - 276;
+                            
+                            for (int x = startIndex; x <= endIndex; x++)
+                            {
+                                string[] ValueArray = (string[])allLines[x];
+                                string line = string.Join(",", ValueArray.Skip(1));
+                                
+                           
+                                // Check if the line has already been written
+                                if (!uniqueLines.Contains(line))
+                                {
+
+                                // Write the values to the file
+                                if (!uniqueLines.Contains(DatesArray[i]))
+                                {
+                                    writer.WriteLine(DatesArray[i] + "," + line);
+                                }
+
+                                    // Add the line to the HashSet to track it as written
+                                    uniqueLines.Add(line);
+                            }
                         }
-                        //    writer.Write(DatesArray[i] + ",");
-                    }
 
-                    foreach (var items in allLines)
-                    {
-
-                        for (int j = 0; j < items.Length; j++)
-                        {
-                            writer.Write(items[j].ToString() + ",");
-                        }
-                        writer.Write("\n");
-
-                        // Write the current element
 
                     }
-                    //for (int x = 2; x < allLines.Count; x++)
-                    //{
-                    //    writer.Write(allLines[x].Count());
-                    //    for (int q = 0; q < DatesArray.Length; q++)
-                    //    {
-
-                    //        writer.Write(allLines[x][q].ToString());
-                    //        writer.Write("\n");
-                    //    }
-                    //}
-                    //foreach (var items in allLines)
-                    //{
-                    //    for (int q = 0; q < DatesArray.Length; q++)
-                    //    {
-                    //        writer.Write(DatesArray[q] + ",");
-                    //        writer.Write(items[2 * q + 4]);
-                    //        writer.Write(items[2 * q + 5]);
-                    //        writer.Write("\n");
-                    //    }
-                    //}
+                    
+                    return filePath;
                 }
-                return filePath;
             }
             catch (Exception ex)
             {
