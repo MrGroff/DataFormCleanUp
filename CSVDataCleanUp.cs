@@ -108,7 +108,7 @@ namespace DataFormCleanUp
                             }
                             count = i;
                             //writer.Write(DatesArray[i]);
-                            
+                             
                             HashSet<string> uniqueLines = new HashSet<string>();
                             int startIndex = 69;
                             int endIndex = allLines.Count - 276;
